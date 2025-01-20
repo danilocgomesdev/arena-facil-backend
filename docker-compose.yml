@@ -14,10 +14,18 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:21.1.1
+    container_name: arena_facil_keycloak
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-    command: start-dev
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://arena_facil_postgres:5432/arena_facil
+      - KC_DB_USERNAME=admin
+      - KC_DB_PASSWORD=admin
+      - KC_HOSTNAME=localhost
+      - KC_IMPORT=/opt/keycloak/data/import
+    volumes:
+      - ./keycloak-export:/opt/keycloak/data/import
     ports:
       - "8080:8080"
     depends_on:
@@ -26,7 +34,7 @@ services:
       resources:
         limits:
           memory: 1g
-
+    command: start-dev --import-realm
 
 volumes:
   postgres_data:
